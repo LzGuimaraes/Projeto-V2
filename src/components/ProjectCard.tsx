@@ -49,6 +49,7 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
         <div className="flex-1 min-w-0">
           <h3 className="text-lg font-semibold text-foreground mb-1 break-words">{project.nomeProjeto}</h3>
           <p className="text-sm text-muted-foreground break-words">Cliente: {project.cliente}</p>
+          <p className="text-sm text-muted-foreground break-words">Nº do Projeto: <span className="font-medium text-foreground">{project.numeroProjeto}</span></p>
         </div>
         <Badge 
           className="ml-3 whitespace-nowrap"
