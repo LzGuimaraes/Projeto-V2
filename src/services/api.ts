@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://improved-space-orbit-ww5xvw7w79725v76-8080.app.github.dev/projetos';
+const API_BASE_URL = 'https://projeto-backend-y1rx.onrender.com/projetos';
 
 export interface Project {
   numeroProjeto: string;
