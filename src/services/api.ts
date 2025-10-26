@@ -16,49 +16,45 @@ export interface Project {
 interface ApiService {
   getAllProjects: () => Promise<Project[]>;
   searchProjects: (valor: string) => Promise<Project[]>;
+  updateStatusReport: (numeroProjeto: string, statusReport: string) => Promise<Project>;
 }
 
 export const api: ApiService = {
+  // ✅ Buscar todos os projetos
   getAllProjects: async () => {
     const url = `${API_BASE_URL}/all`;
-    try {
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-      });
-
-      if (!response.ok) {
-        throw new Error(`Erro HTTP: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      return data as Project[];
-
-    } catch (error) {
-      throw error; 
-    }
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
+    return response.json();
   },
 
-  searchProjects: async (valor) => {
+  // ✅ Buscar por cliente ou número do projeto
+  searchProjects: async (valor: string) => {
     const url = `${API_BASE_URL}/buscar/${valor}`;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
+    return response.json();
+  },
 
-    try {
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-      });
+  // ✅ Atualizar status report de um projeto
+  updateStatusReport: async (numeroProjeto: string, statusReport: string) => {
+    const url = `${API_BASE_URL}/${numeroProjeto}/status-report`;
+    const response = await fetch(url, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ statusReport })
+    });
 
-      if (!response.ok) {
-        throw new Error(`Erro HTTP: ${response.status}`);
-      }
-      
-      const data = await response.json();
-
-      return data as Project[];
-      
-    } catch (error) {
-      throw error;
+    if (!response.ok) {
+      throw new Error(`Erro ao atualizar status report: ${response.status}`);
     }
+
+    return response.json();
   }
 };

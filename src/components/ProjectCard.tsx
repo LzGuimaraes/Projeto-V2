@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { api } from "../services/api"; // CORREÇÃO: Removido o alias '@/'
 
 export interface Project {
   numeroProjeto: string;
@@ -31,8 +32,25 @@ const statusConfig = {
 
 const ProjectCard = ({ project }: ProjectCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  
+  const [statusInput, setStatusInput] = useState(project.statusReport || "");
+  const [isUpdating, setIsUpdating] =useState(false);
+
   const status = statusConfig[project.fase] || statusConfig['Pendente'];
+
+  const handleUpdateStatus = async () => {
+    try {
+      setIsUpdating(true);
+      const updatedProject = await api.updateStatusReport(project.numeroProjeto, statusInput);
+      project.statusReport = updatedProject.statusReport;
+      setIsUpdating(false);
+      alert("Status report atualizado com sucesso!");
+    } catch (error) {
+      setIsUpdating(false);
+      console.error("Erro ao atualizar status:", error);
+      alert("Falha ao atualizar status report.");
+    }
+  };
+
 
   const formatDate = (dateString: string) => {
     if (!dateString) return "N/A";
@@ -43,12 +61,15 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
   const descriptionText = project.statusReport.replace(/^(https?:\/\/[^\s]+)\s*/, '').trim();
 
   return (
-    <div className="bg-card border border-border rounded-lg p-6 transition-all duration-300 hover:shadow-lg">
+    <div className={`bg-card border border-border rounded-lg p-6 transition-all duration-300 hover:shadow-lg ${
+      isExpanded ? 'md:col-span-2' : '' 
+    }`}>
       {/* --- CABEÇALHO --- */}
       <div className="flex justify-between items-start mb-3 gap-4">
         <div className="flex-1 min-w-0">
           <h3 className="text-lg font-semibold text-foreground mb-1 break-words">{project.nomeProjeto}</h3>
           <p className="text-sm text-muted-foreground break-words">Cliente: {project.cliente}</p>
+          <p className="text-sm text-muted-foreground break-words mt-1">Nº Projeto: {project.numeroProjeto}</p>
         </div>
         <Badge 
           className="ml-3 whitespace-nowrap"
@@ -66,7 +87,7 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
       {/* --- DETALHES EXPANSÍVEIS --- */}
       <div 
         className={`overflow-hidden transition-all duration-500 ease-in-out ${
-          isExpanded ? "max-h-[1000px] opacity-100 mt-4" : "max-h-0 opacity-0"
+          isExpanded ? "max-h-[1200px] opacity-100 mt-4" : "max-h-0 opacity-0"
         }`}
       >
         <div className="space-y-4 border-t border-border pt-4">
@@ -98,10 +119,26 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
                 </span>
               </div>
             </div>
-          <div>
-            <p className="font-semibold text-foreground text-sm">Status Report</p>
-            <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line break-words">{descriptionText || "Nenhuma descrição fornecida."}</p>
-          </div>
+            {/* --- STATUS REPORT EDITÁVEL --- */}
+            <div>
+              <p className="font-semibold text-foreground text-sm">Status Report</p>
+              <textarea
+                value={statusInput}
+                onChange={(e) => setStatusInput(e.target.value)}
+                className="w-full mt-1 p-2 border border-border rounded-md text-sm resize-none"
+                rows={6} 
+                placeholder="Nenhuma descrição fornecida."
+              />
+              <Button
+                onClick={handleUpdateStatus}
+                disabled={isUpdating || statusInput === project.statusReport}
+                className="mt-2"
+                size="sm"
+              >
+                {isUpdating ? "Atualizando..." : "Atualizar Status Report"}
+              </Button>
+            </div>
+
         </div>
       </div>
       <Button
@@ -118,3 +155,4 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
 };
 
 export default ProjectCard;
+
