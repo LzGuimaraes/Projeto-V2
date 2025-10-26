@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://projeto-backend-y1rx.onrender.com/projetos'
+const API_BASE_URL = 'https://projeto-backend-y1rx.onrender.com/projetos';
 
 export interface Project {
   numeroProjeto: string;

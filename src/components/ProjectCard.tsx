@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { api } from "../services/api"; // CORREÇÃO: Removido o alias '@/'
+import { api } from "../services/api";
 
 export interface Project {
   numeroProjeto: string;
