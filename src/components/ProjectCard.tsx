@@ -37,14 +37,14 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-  // AUTO-RESIZE DO TEXTAREA (min = texto, max ≈ 20 linhas)
+  // AUTO-RESIZE DO TEXTAREA
   useEffect(() => {
     if (!textareaRef.current) return;
 
     const textarea = textareaRef.current;
     textarea.style.height = "auto";
 
-    const lineHeight = 20; // px
+    const lineHeight = 20; 
     const maxLines = 20;
     const maxHeight = lineHeight * maxLines;
 
@@ -111,8 +111,8 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
 
       {/* DETALHES EXPANSÍVEIS */}
       <div
-        className={`transition-all duration-500 ease-in-out ${
-          isExpanded ? "max-h-[1200px] opacity-100 mt-4" : "max-h-0 opacity-0"
+        className={`transition-all duration-500 ease-in-out overflow-hidden ${
+          isExpanded ? "max-h-screen opacity-100 mt-4" : "max-h-0 opacity-0"
         }`}
       >
         <div className="space-y-4 border-t border-border pt-4">
@@ -123,15 +123,11 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
             </div>
             <div>
               <p className="font-semibold text-foreground">Início</p>
-              <p className="text-muted-foreground">
-                {formatDate(project.dataInicio)}
-              </p>
+              <p className="text-muted-foreground">{formatDate(project.dataInicio)}</p>
             </div>
             <div>
               <p className="font-semibold text-foreground">Término Previsto</p>
-              <p className="text-muted-foreground">
-                {formatDate(project.dataTerminoAprovada)}
-              </p>
+              <p className="text-muted-foreground">{formatDate(project.dataTerminoAprovada)}</p>
             </div>
           </div>
 
@@ -169,11 +165,7 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
         className="mt-4 w-full justify-center gap-2 text-primary"
       >
         {isExpanded ? "Ver menos" : "Ver mais detalhes"}
-        {isExpanded ? (
-          <ChevronUp className="h-4 w-4" />
-        ) : (
-          <ChevronDown className="h-4 w-4" />
-        )}
+        {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
       </Button>
     </div>
   );
