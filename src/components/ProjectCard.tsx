@@ -100,11 +100,13 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
       </div>
 
       {/* DETALHES EXPANSÍVEIS */}
-      <div
-        className={`transition-all duration-500 ease-in-out ${
-          isExpanded ? "max-h-[1200px] opacity-100 mt-4" : "max-h-0 opacity-0"
-        }`}
-      >
+        <div
+            className={`transition-all duration-500 ease-in-out ${
+              isExpanded
+                ? "max-h-[1200px] opacity-100 mt-4 overflow-visible"
+                : "max-h-0 opacity-0 overflow-hidden"
+            }`}
+          >
         <div className="space-y-4 border-t border-border pt-4">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
             <div>
