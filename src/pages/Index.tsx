@@ -93,9 +93,9 @@ const Index = () => {
           <div className="mt-8">
             <SearchBar
               searchTerm={searchTerm}
-              onSearchChange={setSearchTerm} // Atualiza o estado do <input>
-              onSearch={handleSearch}       // Chama a função de busca
-              onClear={handleClear}         // Chama a função de limpar
+              onSearchChange={setSearchTerm} 
+              onSearch={handleSearch}       
+              onClear={handleClear}         
             />
           </div>
         </section>
