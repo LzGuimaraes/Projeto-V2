@@ -37,153 +37,146 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-  const MIN_HEIGHT = 120;
+  // AUTO-RESIZE DO TEXTAREA (min = texto, max ≈ 20 linhas)
+  useEffect(() => {
+    if (!textareaRef.current) return;
 
-useEffect(() => {
-  if (!textareaRef.current) return;
+    const textarea = textareaRef.current;
+    textarea.style.height = "auto";
 
-  const textarea = textareaRef.current;
-  textarea.style.height = "auto";
+    const lineHeight = 20; // px
+    const maxLines = 20;
+    const maxHeight = lineHeight * maxLines;
 
-  const maxHeight = 24 * 16; 
-  const newHeight = textarea.scrollHeight;
+    textarea.style.height = Math.min(textarea.scrollHeight, maxHeight) + "px";
+  }, [statusInput]);
 
-  textarea.style.height = Math.min(newHeight, maxHeight) + "px";
-}, [statusInput]);
+  const status = statusConfig[project.fase] || statusConfig["Pendente"];
 
+  const handleUpdateStatus = async () => {
+    try {
+      setIsUpdating(true);
+      const updatedProject = await api.updateStatusReport(
+        project.numeroProjeto,
+        statusInput
+      );
+      project.statusReport = updatedProject.statusReport;
+      setIsUpdating(false);
+      alert("Status report atualizado com sucesso!");
+    } catch (error) {
+      setIsUpdating(false);
+      console.error("Erro ao atualizar status:", error);
+      alert("Falha ao atualizar status report.");
+    }
+  };
 
-const status = statusConfig[project.fase] || statusConfig["Pendente"];
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "N/A";
+    const [year, month, day] = dateString.split("-");
+    return `${day}/${month}/${year}`;
+  };
 
-const handleUpdateStatus = async () => {
-  try {
-    setIsUpdating(true);
-    const updatedProject = await api.updateStatusReport(
-      project.numeroProjeto,
-      statusInput
-    );
-    project.statusReport = updatedProject.statusReport;
-    setIsUpdating(false);
-    alert("Status report atualizado com sucesso!");
-  } catch (error) {
-    setIsUpdating(false);
-    console.error("Erro ao atualizar status:", error);
-    alert("Falha ao atualizar status report.");
-  }
-};
-
-const formatDate = (dateString: string) => {
-  if (!dateString) return "N/A";
-  const [year, month, day] = dateString.split("-");
-  return `${day}/${month}/${year}`;
-};
-
-const descriptionText = project.statusReport.replace(
-  /^(https?:\/\/[^\s]+)\s*/,
-  ""
-).trim();
-
-return (
-  <div
-    className={`bg-card border border-border rounded-lg p-6 transition-all duration-300 hover:shadow-lg ${
-      isExpanded ? "md:col-span-2" : ""
-    }`}
-  >
-    {/* CABEÇALHO */}
-    <div className="flex justify-between items-start mb-3 gap-4">
-      <div className="flex-1 min-w-0">
-        <h3 className="text-lg font-semibold text-foreground mb-1 break-words">
-          {project.nomeProjeto}
-        </h3>
-        <p className="text-sm text-muted-foreground break-words">
-          Cliente: {project.cliente}
-        </p>
-        <p className="text-sm text-muted-foreground break-words mt-1">
-          Nº Projeto: {project.numeroProjeto}
-        </p>
-      </div>
-      <Badge
-        className="ml-3 whitespace-nowrap"
-        style={{
-          backgroundColor: status.bg,
-          color: status.text,
-          borderColor: status.border,
-          borderWidth: "1px",
-        }}
-      >
-        {project.fase}
-      </Badge>
-    </div>
-
-    {/* DETALHES EXPANSÍVEIS */}
+  return (
     <div
-      className={`transition-all duration-500 ease-in-out ${
-        isExpanded ? "max-h-[1200px] opacity-100 mt-4" : "max-h-0 opacity-0"
+      className={`bg-card border border-border rounded-lg p-6 transition-all duration-300 hover:shadow-lg ${
+        isExpanded ? "md:col-span-2" : ""
       }`}
     >
-      <div className="space-y-4 border-t border-border pt-4">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
-          <div>
-            <p className="font-semibold text-foreground">Gerente</p>
-            <p className="text-muted-foreground">{project.gerente}</p>
-          </div>
-          <div>
-            <p className="font-semibold text-foreground">Início</p>
-            <p className="text-muted-foreground">
-              {formatDate(project.dataInicio)}
-            </p>
-          </div>
-          <div>
-            <p className="font-semibold text-foreground">Término Previsto</p>
-            <p className="text-muted-foreground">
-              {formatDate(project.dataTerminoAprovada)}
-            </p>
-          </div>
+      {/* CABEÇALHO */}
+      <div className="flex justify-between items-start mb-3 gap-4">
+        <div className="flex-1 min-w-0">
+          <h3 className="text-lg font-semibold text-foreground mb-1 break-words">
+            {project.nomeProjeto}
+          </h3>
+          <p className="text-sm text-muted-foreground break-words">
+            Cliente: {project.cliente}
+          </p>
+          <p className="text-sm text-muted-foreground break-words mt-1">
+            Nº Projeto: {project.numeroProjeto}
+          </p>
         </div>
 
-        {/* STATUS REPORT EDITÁVEL */}
-        <div>
-          <p className="font-semibold text-foreground text-sm">Status Report</p>
+        <Badge
+          className="ml-3 whitespace-nowrap"
+          style={{
+            backgroundColor: status.bg,
+            color: status.text,
+            borderColor: status.border,
+            borderWidth: "1px",
+          }}
+        >
+          {project.fase}
+        </Badge>
+      </div>
 
-          <textarea
-            ref={textareaRef}
-            value={statusInput}
-            onChange={(e) => setStatusInput(e.target.value)}
-            className="w-full mt-1 p-2 border border-border rounded-md text-sm resize-none"
-            style={{
-              minHeight: "120px",
-              maxHeight: "24em",
-              overflowY: "auto"
-            }}
-            placeholder="Nenhuma descrição fornecida."
-          />
+      {/* DETALHES EXPANSÍVEIS */}
+      <div
+        className={`transition-all duration-500 ease-in-out ${
+          isExpanded ? "max-h-[1200px] opacity-100 mt-4" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="space-y-4 border-t border-border pt-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+            <div>
+              <p className="font-semibold text-foreground">Gerente</p>
+              <p className="text-muted-foreground">{project.gerente}</p>
+            </div>
+            <div>
+              <p className="font-semibold text-foreground">Início</p>
+              <p className="text-muted-foreground">
+                {formatDate(project.dataInicio)}
+              </p>
+            </div>
+            <div>
+              <p className="font-semibold text-foreground">Término Previsto</p>
+              <p className="text-muted-foreground">
+                {formatDate(project.dataTerminoAprovada)}
+              </p>
+            </div>
+          </div>
 
-          <Button
-            onClick={handleUpdateStatus}
-            disabled={isUpdating || statusInput === project.statusReport}
-            className="mt-2"
-            size="sm"
-          >
-            {isUpdating ? "Atualizando..." : "Atualizar Status Report"}
-          </Button>
+          {/* STATUS REPORT EDITÁVEL */}
+          <div>
+            <p className="font-semibold text-foreground text-sm">Status Report</p>
+
+            <textarea
+              ref={textareaRef}
+              value={statusInput}
+              onChange={(e) => setStatusInput(e.target.value)}
+              className="w-full mt-1 p-2 border border-border rounded-md text-sm resize-none"
+              style={{
+                overflowY: "auto",
+              }}
+              placeholder="Nenhuma descrição fornecida."
+            />
+
+            <Button
+              onClick={handleUpdateStatus}
+              disabled={isUpdating || statusInput === project.statusReport}
+              className="mt-2"
+              size="sm"
+            >
+              {isUpdating ? "Atualizando..." : "Atualizar Status Report"}
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <Button
-      variant="ghost"
-      size="sm"
-      onClick={() => setIsExpanded(!isExpanded)}
-      className="mt-4 w-full justify-center gap-2 text-primary"
-    >
-      {isExpanded ? "Ver menos" : "Ver mais detalhes"}
-      {isExpanded ? (
-        <ChevronUp className="h-4 w-4" />
-      ) : (
-        <ChevronDown className="h-4 w-4" />
-      )}
-    </Button>
-  </div>
-);
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="mt-4 w-full justify-center gap-2 text-primary"
+      >
+        {isExpanded ? "Ver menos" : "Ver mais detalhes"}
+        {isExpanded ? (
+          <ChevronUp className="h-4 w-4" />
+        ) : (
+          <ChevronDown className="h-4 w-4" />
+        )}
+      </Button>
+    </div>
+  );
 };
 
 export default ProjectCard;
