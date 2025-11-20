@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -36,13 +36,6 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
   const [isUpdating, setIsUpdating] = useState(false);
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-
-  useEffect(() => {
-  if (!textareaRef.current) return;
-
-  textareaRef.current.style.height = "auto";
-  textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
-}, [statusInput]);
 
   const status = statusConfig[project.fase] || statusConfig["Pendente"];
 
@@ -108,7 +101,7 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
 
       {/* DETALHES EXPANSÍVEIS */}
       <div
-        className={`overflow-hidden transition-all duration-500 ease-in-out ${
+        className={`transition-all duration-500 ease-in-out ${
           isExpanded ? "max-h-[1200px] opacity-100 mt-4" : "max-h-0 opacity-0"
         }`}
       >
@@ -141,8 +134,14 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
               value={statusInput}
               onChange={(e) => setStatusInput(e.target.value)}
               className="w-full mt-1 p-2 border border-border rounded-md text-sm resize-none"
+              style={{
+                minHeight: "120px",
+                maxHeight: "24em",
+                overflowY: "auto"
+              }}
               placeholder="Nenhuma descrição fornecida."
             />
+
 
             <Button
               onClick={handleUpdateStatus}
