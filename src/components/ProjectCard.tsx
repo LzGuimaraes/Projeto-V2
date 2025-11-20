@@ -37,15 +37,12 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-  const MIN_HEIGHT = 120;
-
   useEffect(() => {
-    if (!textareaRef.current) return;
+  if (!textareaRef.current) return;
 
-    textareaRef.current.style.height = "auto";
-    textareaRef.current.style.height =
-      Math.max(textareaRef.current.scrollHeight, MIN_HEIGHT) + "px";
-  }, [statusInput]);
+  textareaRef.current.style.height = "auto";
+  textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
+}, [statusInput]);
 
   const status = statusConfig[project.fase] || statusConfig["Pendente"];
 
@@ -143,8 +140,7 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
               ref={textareaRef}
               value={statusInput}
               onChange={(e) => setStatusInput(e.target.value)}
-              className="w-full mt-1 p-2 border border-border rounded-md text-sm resize-none overflow-hidden"
-              style={{ minHeight: MIN_HEIGHT }}
+              className="w-full mt-1 p-2 border border-border rounded-md text-sm resize-none"
               placeholder="Nenhuma descrição fornecida."
             />
 
