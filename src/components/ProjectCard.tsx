@@ -21,7 +21,7 @@ interface ProjectCardProps {
   project: Project;
 }
 
-const statusConfig = {
+const statusConfig: Record<string, { bg: string; text: string; border: string }> = {
   'Trabalho Em Andamento': { bg: 'rgba(251, 191, 36, 0.2)', text: 'rgb(217, 119, 6)', border: 'rgba(251, 191, 36, 0.4)' },
   'Concluído': { bg: 'rgba(74, 222, 128, 0.2)', text: 'rgb(22, 163, 74)', border: 'rgba(74, 222, 128, 0.4)' },
   'Cancelado': { bg: 'rgba(248, 113, 113, 0.2)', text: 'rgb(220, 38, 38)', border: 'rgba(248, 113, 113, 0.4)' },
@@ -51,7 +51,11 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
     textarea.style.height = Math.min(textarea.scrollHeight, maxHeight) + "px";
   }, [statusInput]);
 
+  // Fallback seguro para o status
   const status = statusConfig[project.fase] || statusConfig["Pendente"];
+  
+  // Garante que o valor esteja entre 0 e 100 para a barra visual
+  const progressValue = Math.min(Math.max(project.porcentagemConclusao || 0, 0), 100);
 
   const handleUpdateStatus = async () => {
     try {
@@ -109,6 +113,21 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
         </Badge>
       </div>
 
+      {/* --- NOVA SEÇÃO: BARRA DE PROGRESSO --- */}
+      <div className="mt-4 mb-2">
+        <div className="flex justify-between items-center mb-1">
+          <span className="text-xs font-medium text-muted-foreground">Conclusão</span>
+          <span className="text-sm font-bold text-foreground">{progressValue}%</span>
+        </div>
+        <div className="w-full bg-secondary h-2.5 rounded-full overflow-hidden">
+          <div 
+            className="bg-primary h-full rounded-full transition-all duration-500 ease-out"
+            style={{ width: `${progressValue}%` }}
+          />
+        </div>
+      </div>
+      {/* ------------------------------------- */}
+
       {/* DETALHES EXPANSÍVEIS */}
       <div
         className={`transition-all duration-500 ease-in-out overflow-hidden ${
@@ -139,7 +158,7 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
               ref={textareaRef}
               value={statusInput}
               onChange={(e) => setStatusInput(e.target.value)}
-              className="w-full mt-1 p-2 border border-border rounded-md text-sm resize-none"
+              className="w-full mt-1 p-2 border border-border rounded-md text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/50"
               style={{
                 overflowY: "auto",
               }}
@@ -162,7 +181,7 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
         variant="ghost"
         size="sm"
         onClick={() => setIsExpanded(!isExpanded)}
-        className="mt-4 w-full justify-center gap-2 text-primary"
+        className="mt-4 w-full justify-center gap-2 text-primary hover:bg-primary/10"
       >
         {isExpanded ? "Ver menos" : "Ver mais detalhes"}
         {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}

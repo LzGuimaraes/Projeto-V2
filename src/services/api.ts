@@ -20,7 +20,7 @@ interface ApiService {
 }
 
 export const api: ApiService = {
-  // ✅ Buscar todos os projetos
+  // Buscar todos os projetos
   getAllProjects: async () => {
     const url = `${API_BASE_URL}/all`;
     const response = await fetch(url, {
@@ -31,7 +31,7 @@ export const api: ApiService = {
     return response.json();
   },
 
-  // ✅ Buscar por cliente ou número do projeto
+  // Buscar por cliente ou número do projeto
   searchProjects: async (valor: string) => {
     const url = `${API_BASE_URL}/buscar/${valor}`;
     const response = await fetch(url, {
@@ -42,7 +42,7 @@ export const api: ApiService = {
     return response.json();
   },
 
-  // ✅ Atualizar status report de um projeto
+  // Atualizar status report de um projeto
   updateStatusReport: async (numeroProjeto: string, statusReport: string) => {
     const url = `${API_BASE_URL}/${numeroProjeto}/status-report`;
     const response = await fetch(url, {
