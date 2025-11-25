@@ -87,7 +87,7 @@ const Index = () => {
       <main className="container mx-auto px-4 py-12">
         <section className="mb-12 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6 text-primary">
-            Gerencie e acompanhe seus projetos
+            Projetos Estratégicos
           </h1>
           
           <div className="mt-8">
