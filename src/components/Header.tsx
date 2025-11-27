@@ -9,7 +9,7 @@ const Header = () => {
       <div className="h-1 w-full bg-gradient-to-r from-primary via-accent to-success" />
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-primary-foreground">Gerenciamento de Projetos</h1>
+          <h1 className="text-2xl font-bold text-primary-foreground">UGPRO</h1>
           
           <nav className="flex gap-4">
             <Link 
