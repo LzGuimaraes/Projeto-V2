@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://projeto-backend-y1rx.onrender.com';
+const API_BASE_URL = 'https://projeto-backend-y1rx.onrender.com/projetos';
 
 export interface Project {
   numeroProjeto: string;
@@ -29,7 +29,7 @@ interface ApiService {
 export const api: ApiService = {
   
   getAllProjects: async () => {
-    const url = `${API_BASE_URL}/all`;
+    const url = `${API_BASE_URL}/all`; 
     const response = await fetch(url, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' }
@@ -39,7 +39,6 @@ export const api: ApiService = {
   },
 
   filterProjects: async (filters: FilterParams) => {
-   
     const params = new URLSearchParams();
 
     if (filters.busca) params.append('busca', filters.busca);
